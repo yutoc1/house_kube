@@ -55,7 +55,7 @@ Vagrant.configure("3") do |config|
   config.vm.define "cp01" do |server|
     server.vm.box = "bento/ubuntu-24.04"
     server.vm.hostname = "cp01"
-    server.vm.network "public_network", ip: "192.168.56.200"    
+    server.vm.network "private_network", ip: "192.168.56.200"    
     server.vm.synced_folder ".", "/vagrant", disabled: true
     server.vm.provider "virtualbox" do |vb|
       vb.customize [
@@ -73,7 +73,7 @@ sudo ip route add default via 192.168.56.1
   config.vm.define "wk01" do |server|
     server.vm.box = "bento/ubuntu-24.04"
     server.vm.hostname = "wk01"
-    server.vm.network "public_network", ip: "192.168.56.201"    
+    server.vm.network "private_network", ip: "192.168.56.201"    
     server.vm.synced_folder ".", "/vagrant", disabled: true
     server.vm.provider "virtualbox" do |vb|
       vb.customize [
@@ -91,7 +91,7 @@ sudo ip route add default via 192.168.56.1
   config.vm.define "wk02" do |server|
     server.vm.box = "bento/ubuntu-24.04"
     server.vm.hostname = "wk02"
-    server.vm.network "public_network", ip: "192.168.56.202"    
+    server.vm.network "private_network", ip: "192.168.56.202"    
     server.vm.synced_folder ".", "/vagrant", disabled: true
     server.vm.provider "virtualbox" do |vb|
       vb.customize [
