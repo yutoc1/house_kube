@@ -64,10 +64,6 @@ Vagrant.configure("3") do |config|
         "--cpus", "2"
       ]
     end
-    server.vm.provision "shell", run: "always", inline: <<-SHELL
-sudo ip route del default via 10.0.2.2
-sudo ip route add default via 192.168.56.1
-    SHELL
   end
 
   config.vm.define "wk01" do |server|
@@ -83,8 +79,9 @@ sudo ip route add default via 192.168.56.1
       ]
     end
     server.vm.provision "shell", run: "always", inline: <<-SHELL
-sudo ip route del default via 10.0.2.2
-sudo ip route add default via 192.168.56.1
+        apt get update
+        apt get upgrade
+        apt get 
     SHELL
   end
 
