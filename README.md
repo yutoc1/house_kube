@@ -88,7 +88,7 @@ kubeadm version
 kubeadmの初期セットアップ
 
 ```bash
-kubeadm init
+kubeadm init --pod-network-cidr 172.16.0.0/16 --apiserver-advertise-address 192.168.56.200
 ```
 
 設定ファイルをホームディレクトリにコピーする｡
@@ -106,5 +106,46 @@ CNIのセットアップ
 
 ```bash
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml -O
+vim calico.yaml
+
+# CALICO_IPV4POOL_CIDRのValueを172.16.0.0/16に変更する｡
+# - name: CALICO_IPV4POOL_CIDR
+#   value: "192.168.0.0/16"
+
 kubectl apply -f calico.yaml
+kubectl get pod -A
+```
+
+WorkerNode Join用の設定を確認する｡
+
+```
+sudo kubeadm token create --print-join-command
+```
+
+## WorkerNodeの初期設定
+
+boxにログインする｡
+
+```
+vagrant ssh wk01
+```
+
+サービスの稼働状態を確認する｡
+
+```bash
+systemctl status crio
+systemctl status kubelet
+```
+
+CLIのインストール状況を確認する｡
+
+```bash
+kubectl version --client
+kubeadm version
+```
+
+kubeadmの初期セットアップ
+
+```bash
+kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
 ```
