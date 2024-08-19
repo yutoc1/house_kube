@@ -154,7 +154,7 @@ sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha
 
 Contol Planeの初期化｡
 
-```
+```bash
 sudo kubeadm reset
 sudo iptables -F
 sudo iptables -F -t nat
@@ -166,6 +166,18 @@ sudo rm -r /etc/cni/net.d
 Worker Nodeの初期化｡
 Control Planeで以下を実行する｡
 
-```
+```bash
 kubectl delete node <ワーカーノード名>
+```
+
+## 動作確認
+
+```bash
+kubectl run nginx --image=nginx --port=80
+kubectl get pod -o wide
+kubectl exec nginx -- nginx -v
+kubectl expose pod nginx --type=NodePort
+IP=`kubectl get pod node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalIP")].address}'`
+PORT=`kubectl get svc nginx -o yaml -o=jsonpath='{.spec.ports[0].nodePort}'`
+curl -I http://$IP:$PORT
 ```
