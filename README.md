@@ -5,7 +5,7 @@
 - MasterNode1台
 - WorkerNode2台
 - VirtualBox上でUbuntuを動かす
-- 低レイヤーランタイムはCRI-Oを使う
+- ランタイムはCRI-Oを使う
 
 ## 仮想サーバ概要
 
