@@ -127,7 +127,7 @@ sudo kubeadm token create --print-join-command
 boxにログインする｡
 
 ```
-vagrant ssh wk01
+vagrant ssh wkxx
 ```
 
 サービスの稼働状態を確認する｡
@@ -148,4 +148,24 @@ kubeadmの初期セットアップ
 
 ```bash
 sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
+```
+
+## クラスタの初期化
+
+Contol Planeの初期化｡
+
+```
+sudo kubeadm reset
+sudo iptables -F
+sudo iptables -F -t nat
+sudo iptables -F -t mangle
+sudo iptables -X
+sudo rm -r /etc/cni/net.d
+```
+
+Worker Nodeの初期化｡
+Control Planeで以下を実行する｡
+
+```
+kubectl delete node <ワーカーノード名>
 ```
