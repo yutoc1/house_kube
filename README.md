@@ -119,7 +119,7 @@ sudo kubeadm token create --print-join-command
 
 InternalIPを変更する｡
 
-```
+```bash
 sudo vim /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 # 変更前
 Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
@@ -128,6 +128,12 @@ Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --node-ip
 # サービスを再起動
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
+```
+
+Calicoのルーティングを変更する｡
+
+```bash
+kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=eth1
 ```
 
 ## WorkerNodeの初期設定
