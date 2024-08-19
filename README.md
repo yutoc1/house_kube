@@ -96,7 +96,7 @@ sudo kubeadm init --pod-network-cidr 172.16.0.0/16 --apiserver-advertise-address
 ```bash
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl get all -A
 ```
 
