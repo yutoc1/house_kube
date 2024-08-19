@@ -74,8 +74,8 @@ vagrant ssh cp01
 サービスの稼働状態を確認する｡
 
 ```bash
-systemctl status crio
-systemctl status kubelet
+sudo systemctl status crio
+sudo systemctl status kubelet
 ```
 
 CLIのインストール状況を確認する｡
@@ -88,14 +88,14 @@ kubeadm version
 kubeadmの初期セットアップ
 
 ```bash
-kubeadm init --pod-network-cidr 172.16.0.0/16 --apiserver-advertise-address 192.168.56.200
+sudo kubeadm init --pod-network-cidr 172.16.0.0/16 --apiserver-advertise-address 192.168.56.200
 ```
 
 設定ファイルをホームディレクトリにコピーする｡
 
 ```bash
 mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl get all -A
 ```
@@ -133,8 +133,8 @@ vagrant ssh wk01
 サービスの稼働状態を確認する｡
 
 ```bash
-systemctl status crio
-systemctl status kubelet
+sudo systemctl status crio
+sudo systemctl status kubelet
 ```
 
 CLIのインストール状況を確認する｡
@@ -147,5 +147,5 @@ kubeadm version
 kubeadmの初期セットアップ
 
 ```bash
-kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
+sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
 ```
