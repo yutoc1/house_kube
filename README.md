@@ -177,7 +177,7 @@ kubectl run nginx --image=nginx --port=80
 kubectl get pod -o wide
 kubectl exec nginx -- nginx -v
 kubectl expose pod nginx --type=NodePort
-IP=`kubectl get pod node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalIP")].address}'`
+IP=`kubectl get node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalIP")].address}'`
 PORT=`kubectl get svc nginx -o yaml -o=jsonpath='{.spec.ports[0].nodePort}'`
 curl -I http://$IP:$PORT
 ```
