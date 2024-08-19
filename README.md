@@ -106,12 +106,7 @@ CNIのセットアップ
 
 ```bash
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml -O
-vim calico.yaml
-
-# CALICO_IPV4POOL_CIDRのValueを172.16.0.0/16に変更する｡
-# - name: CALICO_IPV4POOL_CIDR
-#   value: "192.168.0.0/16"
-
+sed -i 's,192.168.0.0/16,172.16.0.0/16,g' calico.yaml
 kubectl apply -f calico.yaml
 kubectl get pod -A
 ```
