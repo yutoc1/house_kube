@@ -50,8 +50,9 @@ EOF
     sudo systemctl start crio
 
     sudo apt install -y kubelet kubeadm kubectl
-    systemctl enable --now kubelet
+    sudo systemctl enable --now kubelet
   SHELL
+
   config.vm.define "cp01" do |server|
     server.vm.box = "bento/ubuntu-24.04"
     server.vm.hostname = "cp01"
