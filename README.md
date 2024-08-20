@@ -218,3 +218,67 @@ IP=`kubectl get node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalI
 PORT=`kubectl get svc nginx -o yaml -o=jsonpath='{.spec.ports[0].nodePort}'`
 curl -I http://$IP:$PORT
 ```
+
+## Prometheus, Grafanaインストール
+
+レポジトリの登録｡
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
+
+Grafana, Prometheusのインストール
+
+```bash
+helm install prometheus-grafana prometheus-community/kube-prometheus-stack
+```
+
+インストールの確認｡
+
+```bash
+kubectl get pods -n default
+kubectl get svc -n default
+```
+
+パスワードの確認｡
+
+```bash
+kubectl get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+```
+
+MetalLBインストール
+
+```bash
+helm repo add metallb https://metallb.github.io/metallb
+helm repo update
+helm install metallb metallb/metallb --set crds.create=true
+```
+
+MetalLB設定
+
+```bash
+kc apply -f ipaddress_pool.yaml
+kc apply -f l2_advertisement.yaml
+```
+
+Nginx-ingressインストール
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install nginx-ingress ingress-nginx/ingress-nginx
+```
+
+Nginx-ingress設定
+
+```bash
+kubectl apply -f grafana-ingress.yml
+```
+
+ポートフォワーディング設定｡
+
+```bash
+kubectl port-forward svc/prometheus-grafana 3000:80
+```
