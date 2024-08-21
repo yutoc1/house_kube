@@ -9,26 +9,33 @@
 
 ## 仮想サーバ概要
 
+- Host
+  - HostOnlyAdapter: 192.168.56.1/24
+  - DHCP: 192.168.56.240/24 - 192.168.56.254/24
+
 - ControlPlane:
   - box: bento/ubuntu-24.04
   - Hostname: cp01
-  - private: 192.168.56.200
+  - private: 192.168.56.200/24
   - memory: 4096
   - cpus: 2
     
 - WorkerNode1:
   - box: bento/ubuntu-24.04
   - Hostname: wk01
-  - private: 192.168.56.201
+  - private: 192.168.56.201/24
   - memory: 8192
   - cpus: 2
  
 - WorkerNode2:
   - box: bento/ubuntu-24.04
   - Hostname: wk02
-  - private: 192.168.56.202
+  - private: 192.168.56.202/24
   - memory: 8192
   - cpus: 2
+
+- IPaddress-Pool
+  - addresses: 192.168.56.210/24 - 192.168.56.239/24
 
 ## 事前インストール
 
