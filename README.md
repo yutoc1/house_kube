@@ -234,49 +234,7 @@ kc apply -f local-pv-wk01-pv01.yaml
 kc apply -f local-pv-wk02-pv01.yaml
 ```
 
-## Grafanaインストール
-
-```bash
-kubectl create namespace grafana
-kubectl apply -f grafana.yaml --namespace=grafana
-```
-
-デプロイ状況を確認する｡
-
-```bash
-kubectl get pvc --namespace=grafana -o wide
-kubectl get deployments --namespace=grafana -o wide
-kubectl get svc --namespace=grafana -o wide
-```
-
-## Prometheus, Grafanaインストール
-
-レポジトリの登録｡
-
-```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-```
-
-Grafana, Prometheusのインストール
-
-```bash
-helm install prometheus-grafana prometheus-community/kube-prometheus-stack
-```
-
-インストールの確認｡
-
-```bash
-kubectl get pods -n default
-kubectl get svc -n default
-```
-
-パスワードの確認｡
-
-```bash
-kubectl get secret prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-```
+## Ingress設定
 
 MetalLBインストール
 
@@ -293,22 +251,23 @@ kc apply -f ipaddress_pool.yaml
 kc apply -f l2_advertisement.yaml
 ```
 
-Nginx-ingressインストール
+## Grafanaインストール
 
 ```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install nginx-ingress ingress-nginx/ingress-nginx
+kubectl create namespace grafana
+kubectl apply -f grafana.yaml --namespace=grafana
 ```
 
-Nginx-ingress設定
+デプロイ状況を確認する｡
 
 ```bash
-kubectl apply -f grafana-ingress.yml
+kubectl get pvc --namespace=grafana -o wide
+kubectl get deployments --namespace=grafana -o wide
+kubectl get svc --namespace=grafana -o wide
 ```
 
-ポートフォワーディング設定｡
+Webコンソールへログインする｡
 
-```bash
-kubectl port-forward svc/prometheus-grafana 3000:80
-```
+`https://<EXTERNAL-IP>:3000`
+
+admin:adminでログイン可能｡初期ログイン時にパスワード変更が必要｡
