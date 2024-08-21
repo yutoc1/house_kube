@@ -4,7 +4,7 @@ metadata:
   name: local-pv-wk01-pv01
 spec:
   capacity:
-    storage: 5Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
