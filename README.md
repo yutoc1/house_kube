@@ -136,16 +136,6 @@ Calicoのルーティングを変更する｡
 kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=eth1
 ```
 
-Helmインストール
-
-```bash
-curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-sudo apt install apt-transport-https --y
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-sudo apt update -y
-sudo apt install helm -y
-```
-
 ## WorkerNodeの初期設定
 
 boxにログインする｡
@@ -187,6 +177,13 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
 
+PV用のディレクトリ作成
+
+```bash
+sudo mkdir -p /mnt/disks/pv01
+sudo chmod 777 /mnt/disks/pv01
+```
+
 ## クラスタの初期化
 
 Contol Planeの初期化｡
@@ -217,6 +214,39 @@ kubectl expose pod nginx --type=NodePort
 IP=`kubectl get node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalIP")].address}'`
 PORT=`kubectl get svc nginx -o yaml -o=jsonpath='{.spec.ports[0].nodePort}'`
 curl -I http://$IP:$PORT
+```
+
+## Helmインストール
+
+```bash
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt install apt-transport-https --y
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt update -y
+sudo apt install helm -y
+```
+
+## Storage設定
+
+```bash
+kc apply -f local-storage.yaml
+kc apply -f local-pv-wk01-pv01.yaml
+kc apply -f local-pv-wk02-pv01.yaml
+```
+
+## Grafanaインストール
+
+```bash
+kubectl create namespace grafana
+kubectl apply -f grafana.yaml --namespace=grafana
+```
+
+デプロイ状況を確認する｡
+
+```bash
+kubectl get pvc --namespace=grafana -o wide
+kubectl get deployments --namespace=grafana -o wide
+kubectl get svc --namespace=grafana -o wide
 ```
 
 ## Prometheus, Grafanaインストール
