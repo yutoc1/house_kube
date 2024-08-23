@@ -72,33 +72,36 @@ vagrant up
 
 ## ControlPlaneの初期設定
 
-Boxにログインする｡
+### Boxにログインする｡
 
 ```
 vagrant ssh cp01
 ```
 
-サービスの稼働状態を確認する｡
+### サービスの稼働状態を確認する｡
 
 ```bash
 sudo systemctl status crio
 sudo systemctl status kubelet
 ```
 
-CLIのインストール状況を確認する｡
+### CLIのインストール状況を確認する｡
 
 ```bash
 kubectl version --client
 kubeadm version
 ```
 
-kubeadmの初期セットアップ
+### kubeadmの初期セットアップ
 
 ```bash
-sudo kubeadm init --pod-network-cidr 172.16.0.0/16 --apiserver-advertise-address 192.168.56.200
+sudo kubeadm init \
+--pod-network-cidr=10.244.0.0/16 \
+--control-plane-endpoint=$(hostname -i | xargs -n1 | grep ^192.) \
+--apiserver-advertise-address=$(hostname -i | xargs -n1 | grep ^192.)
 ```
 
-設定ファイルをホームディレクトリにコピーする｡
+### 設定ファイルをホームディレクトリにコピーする｡
 
 ```bash
 mkdir -p $HOME/.kube
@@ -107,7 +110,26 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl get all -A
 ```
 
-CNIのセットアップ
+### CNIのセットアップ
+
+flannelのセットアップ
+
+```bash
+curl https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml -O
+```
+
+マニフェストの以下を修正する｡
+
+```bash
+        command:
+        - /opt/bin/flanneld
+        args:
+        - --iface=eth1 #ifaceを設定
+        - --ip-masq
+        - --kube-subnet-mgr
+```
+
+~CNI(Calico)のセットアップ~
 
 [公式手順](https://projectcalico.docs.tigera.io/getting-started/kubernetes/self-managed-onprem/onpremises)
 
@@ -118,13 +140,45 @@ kubectl apply -f calico.yaml
 kubectl get pod -A
 ```
 
-WorkerNode Join用の設定を確認する｡
+Calicoのルーティングを変更する｡
+
+```bash
+kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=eth1
+```
+
+### GitHubとの連携
+
+SSHの鍵を作成する｡
+
+```bash
+ssh-keygen -t ed25519 -N "" -f ~/.ssh/github
+cat << EOF > .ssh/config
+Host github.com
+    IdentityFile ~/.ssh/github
+    User git
+EOF
+cat .ssh/github.pub
+```
+
+GitHubに鍵を登録する｡
+
+`Settings > SSH and GPG keys`
+
+Git clone
+
+```bash
+git clone git@github.com:yutoc1/house_kube.git
+```
+
+### WorkerNode Join用の設定を確認する｡
 
 ```
 sudo kubeadm token create --print-join-command
 ```
 
-InternalIPを変更する｡
+### ~InternalIPを変更する｡~
+
+以下の対応は不要｡
 
 ```bash
 sudo vim /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
@@ -137,41 +191,35 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
 
-Calicoのルーティングを変更する｡
-
-```bash
-kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=eth1
-```
-
 ## WorkerNodeの初期設定
 
-boxにログインする｡
+### boxにログインする｡
 
 ```
 vagrant ssh wkxx
 ```
 
-サービスの稼働状態を確認する｡
+### サービスの稼働状態を確認する｡
 
 ```bash
 sudo systemctl status crio
 sudo systemctl status kubelet
 ```
 
-CLIのインストール状況を確認する｡
+### CLIのインストール状況を確認する｡
 
 ```bash
 kubectl version --client
 kubeadm version
 ```
 
-kubeadmの初期セットアップ
+### kubeadmの初期セットアップ
 
 ```bash
 sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
 ```
 
-InternalIPを変更する｡
+### ~InternalIPを変更する｡~
 
 ```
 sudo vim /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
@@ -184,7 +232,7 @@ sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 ```
 
-PV用のディレクトリ作成
+### PV用のディレクトリ作成
 
 ```bash
 sudo mkdir -p /mnt/disks/pv01
@@ -227,7 +275,7 @@ curl -I http://$IP:$PORT
 
 ```bash
 curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-sudo apt install apt-transport-https --y
+sudo apt install apt-transport-https
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
 sudo apt update -y
 sudo apt install helm -y
@@ -236,9 +284,10 @@ sudo apt install helm -y
 ## Storage設定
 
 ```bash
-kc apply -f local-storage.yaml
-kc apply -f local-pv-wk01-pv01.yaml
-kc apply -f local-pv-wk02-pv01.yaml
+cd /house_kube/manifest
+kubectl apply -f storage/local-storage.yaml
+kubectl apply -f storage/local-pv-wk01-pv01.yaml
+kubectl apply -f storage/local-pv-wk02-pv01.yaml
 ```
 
 ## Ingress設定
@@ -254,8 +303,8 @@ helm install metallb metallb/metallb --set crds.create=true
 MetalLB設定
 
 ```bash
-kc apply -f ipaddress_pool.yaml
-kc apply -f l2_advertisement.yaml
+kubectl apply -f metallb/ipaddress_pool.yaml
+kubectl apply -f metallb/l2_advertisement.yaml
 ```
 
 ## Grafanaインストール
