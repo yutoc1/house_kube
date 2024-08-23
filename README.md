@@ -190,8 +190,8 @@ sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha
 ### PV用のディレクトリ作成
 
 ```bash
-sudo mkdir -p /mnt/disks/pv01
-sudo chmod 777 /mnt/disks/pv01
+sudo mkdir -p /mnt/disks/pv{01..02}
+sudo chmod 777 /mnt/disks/pv{01..02}
 ```
 
 ## クラスタの初期化
@@ -239,10 +239,8 @@ sudo apt install helm -y
 ## Storage設定
 
 ```bash
-cd /house_kube/manifest
-kubectl apply -f storage/local-storage.yaml
-kubectl apply -f storage/local-pv-wk01-pv01.yaml
-kubectl apply -f storage/local-pv-wk02-pv01.yaml
+cd ~/house_kube/manifest
+kubectl apply -f storage -R
 ```
 
 ## Ingress設定
@@ -258,6 +256,7 @@ helm install metallb metallb/metallb --set crds.create=true
 MetalLB設定
 
 ```bash
+cd ~/house_kube/manifest
 kubectl apply -f metallb/ipaddress_pool.yaml
 kubectl apply -f metallb/l2_advertisement.yaml
 ```
@@ -265,8 +264,9 @@ kubectl apply -f metallb/l2_advertisement.yaml
 ## Grafanaインストール
 
 ```bash
+cd ~/house_kube/manifest
 kubectl create namespace grafana
-kubectl apply -f grafana.yaml --namespace=grafana
+kubectl apply -f grafana/grafana.yaml --namespace=grafana
 ```
 
 デプロイ状況を確認する｡
