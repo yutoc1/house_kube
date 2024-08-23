@@ -5,6 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     sudo apt update -y
     sudo apt upgrade -y
+    sudo swapoff -a
   SHELL
 
   config.vm.provision "shell", inline: <<-SHELL
