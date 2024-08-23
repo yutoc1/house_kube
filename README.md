@@ -190,8 +190,8 @@ sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha
 ### PV用のディレクトリ作成
 
 ```bash
-sudo mkdir -p /mnt/disks/pv{01..02}
-sudo chmod 777 /mnt/disks/pv{01..02}
+sudo mkdir -p /mnt/disks/pv{01..03}
+sudo chmod 777 /mnt/disks/pv{01..03}
 ```
 
 ## クラスタの初期化
