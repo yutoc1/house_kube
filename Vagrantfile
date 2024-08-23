@@ -51,6 +51,8 @@ EOF
 
     sudo apt install -y kubelet kubeadm kubectl
     sudo systemctl enable --now kubelet
+
+    echo $(hostname -I | xargs -n1 | grep ^192.) $(hostname) | sudo tee -a /etc/hosts
   SHELL
 
   config.vm.define "cp01" do |server|
