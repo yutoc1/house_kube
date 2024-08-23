@@ -129,23 +129,6 @@ curl https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel
         - --kube-subnet-mgr
 ```
 
-~CNI(Calico)のセットアップ~
-
-[公式手順](https://projectcalico.docs.tigera.io/getting-started/kubernetes/self-managed-onprem/onpremises)
-
-```bash
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml -O
-sed -i 's,192.168.0.0/16,172.16.0.0/16,g' calico.yaml
-kubectl apply -f calico.yaml
-kubectl get pod -A
-```
-
-Calicoのルーティングを変更する｡
-
-```bash
-kubectl set env daemonset/calico-node -n kube-system IP_AUTODETECTION_METHOD=interface=eth1
-```
-
 ### GitHubとの連携
 
 SSHの鍵を作成する｡
@@ -176,21 +159,6 @@ git clone git@github.com:yutoc1/house_kube.git
 sudo kubeadm token create --print-join-command
 ```
 
-### ~InternalIPを変更する｡~
-
-以下の対応は不要｡
-
-```bash
-sudo vim /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
-# 変更前
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-# 変更後
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --node-ip=192.168.56.200"
-# サービスを再起動
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
-```
-
 ## WorkerNodeの初期設定
 
 ### boxにログインする｡
@@ -217,19 +185,6 @@ kubeadm version
 
 ```bash
 sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
-```
-
-### ~InternalIPを変更する｡~
-
-```
-sudo vim /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
-# 変更前
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
-# 変更後
-Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --node-ip=192.168.56.201"
-# サービスを再起動
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
 ```
 
 ### PV用のディレクトリ作成
