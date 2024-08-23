@@ -121,12 +121,18 @@ curl https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel
 マニフェストの以下を修正する｡
 
 ```bash
-        command:
-        - /opt/bin/flanneld
-        args:
-        - --iface=eth1 #ifaceを設定
-        - --ip-masq
-        - --kube-subnet-mgr
+command:
+- /opt/bin/flanneld
+args:
+- --iface=eth1 #ifaceを設定
+- --ip-masq
+- --kube-subnet-mgr
+```
+
+マニフェストをApplyする｡
+
+```bash
+kubectl apply -f kube-flannel.yml
 ```
 
 ### GitHubとの連携
