@@ -2,6 +2,12 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize [ "modifyvm", :id, "--vrde", "off" ]
+    vb.customize ["modifyvm", :id, "--uart1", "0x3F8", "4"]
+    vb.customize ["modifyvm", :id, "--uartmode1", "file", File::NULL]
+  end
+
   config.vm.provision "shell", run: "always", inline: <<-SHELL
     sudo apt update -y
     sudo apt upgrade -y
