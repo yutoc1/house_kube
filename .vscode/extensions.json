@@ -1,14 +1,14 @@
 {
-    "recommendations": [
-        "ms-python.python",
-	"vscodevim.vim",
+  "recommendations": [
+    "ms-python.python",
+    "vscodevim.vim",
 	"usernamehw.errorlens",
 	"eamodio.gitlens",
 	"bierner.markdown-mermaid",
 	"PKief.material-icon-theme",
 	"esbenp.prettier-vscode",
 	"Gruntfuggly.activitusbar",
-	"GitHub.github-vscode-theme"
+	"GitHub.github-vscode-theme",
 	"formulahendry.auto-close-tag",
 	"huntertran.auto-markdown-toc",
 	"njpwerner.autodocstring",
@@ -25,5 +25,5 @@
 	"humao.rest-client",
 	"shuworks.vscode-table-formatter",
 	"redhat.vscode-yaml"
-    ]
+  ]
 }
