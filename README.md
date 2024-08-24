@@ -296,23 +296,39 @@ admin:adminでログイン可能｡初期ログイン時にパスワード変更
 ```bash
 git clone https://github.com/coder/code-server
 cd code-server
+sed -i 's,ClusterIP,LoadBalancer,g' ci/helm-chart/values.yaml
+sed -i '$apasswod: "Min@4581"' ci/helm-chart/values.yaml
 helm upgrade --install code-server ci/helm-chart
 ```
 
-Serviceを編集
-
-```bash
-kubectl edit svc/code-server -n default
-
-# 追加する
-externalTrafficPolicy: Cluster
-
-# typeを変更する
-type: LoadBalancer
-```
-
-初期パスワードを確認する
+パスワードを確認する
 
 ```bash
 echo $(kubectl get secret --namespace default code-server -o jsonpath="{.data.password}" | base64 --decode)
+```
+
+code-serverへログインする｡
+
+http://<EXTERNAL-IP>:8080
+
+SSHの鍵を作成する｡
+
+```bash
+ssh-keygen -t ed25519 -N "" -f ~/.ssh/github
+cat << EOF > .ssh/config
+Host github.com
+    IdentityFile ~/.ssh/github
+    User git
+EOF
+cat .ssh/github.pub
+```
+
+GitHubに鍵を登録する｡
+
+`Settings > SSH and GPG keys`
+
+Git clone
+
+```bash
+git clone git@github.com:yutoc1/house_kube.git
 ```
