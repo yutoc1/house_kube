@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: local-pv-wk01-pv01
+  name: local-pv-wk01-code
 spec:
   capacity:
-    storage: 2Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   hostPath:
-    path: /mnt/disks/pv01
+    path: /mnt/disks/code
   nodeAffinity:
     required:
       nodeSelectorTerms:
