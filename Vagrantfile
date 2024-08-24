@@ -39,7 +39,6 @@ EOF
 
     export KUBERNETES_VERSION=v1.31
     export CRIO_VERSION=v1.30
-    sudo apt install -y software-properties-common curl
     curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key |
     sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     sudo echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
