@@ -198,6 +198,8 @@ sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha
 ```bash
 sudo mkdir -p /mnt/disks/pv{01..03}
 sudo chmod 777 /mnt/disks/pv{01..03}
+sudo mkdir -p /mnt/disks/code
+sudo chmod 777 /mnt/disks/code
 ```
 
 ## クラスタの初期化
@@ -288,3 +290,29 @@ Webコンソールへログインする｡
 `https://<EXTERNAL-IP>:3000`
 
 admin:adminでログイン可能｡初期ログイン時にパスワード変更が必要｡
+
+## Code-Serverインストール
+
+```bash
+git clone https://github.com/coder/code-server
+cd code-server
+helm upgrade --install code-server ci/helm-chart
+```
+
+Serviceを編集
+
+```bash
+kubectl edit svc/code-server -n default
+
+# 追加する
+externalTrafficPolicy: Cluster
+
+# typeを変更する
+type: LoadBalancer
+```
+
+初期パスワードを確認する
+
+```bash
+echo $(kubectl get secret --namespace default code-server -o jsonpath="{.data.password}" | base64 --decode)
+```
