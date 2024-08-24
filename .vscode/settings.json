@@ -1,0 +1,10 @@
+{
+  "workbench.colorTheme": "GitHub Dark",
+  "workbench.iconTheme": "material-icon-theme",
+  "yaml.schemas": 
+    "kubernetes": [
+      "*.yml",
+      "*.yaml"
+    ]
+  }
+}
