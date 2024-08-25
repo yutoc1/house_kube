@@ -3,6 +3,8 @@
   "workbench.colorTheme": "GitHub Dark",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.statusBar.visible": true,
+  "workbench.activityBar.location": "bottom",
+  "workbench.layoutControl.enabled": false,
   "workbench.editor.enablePreview": false,
   "explorer.openEditors.visible": 1,
   "explorer.compactFolders": false,
@@ -35,12 +37,86 @@
   "vim.statusBarColorControl": true,
   "vim.statusBarColors.normal": ["#161821", "#818596"],
   "vim.statusBarColors.insert": ["#84A0C6", "#161821"],
-  "vim.statusBarColors.visual": ["#84A0C6", "#161821"],
-  //
+  "vim.statusBarColors.visual": ["#B4BE82", "#161821"],
+  "vim.statusBarColors.visualline": ["#B4BE82", "#161821"],
+  "vim.statusBarColors.visualblock": ["#B4BE82", "#161821"],
+  "vim.statusBarColors.replace": ["#E2A478", "#161821"],
+  "vim.statusBarColors.commandlineinprogress": ["#818596", "#161821"],
+  "vim.statusBarColors.searchinprogressmode": ["#818596", "#161821"],
+  "vim.statusBarColors.easymotionmode": ["#818596", "#161821"],
+  "vim.statusBarColors.easymotioninputmode": ["#818596", "#161821"],
+  "vim.statusBarColors.surroundinputmode": ["#818596", "#161821"],
+  // Auto Save & Format
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 10000,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+  },
+  "[python]":{
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+  },
+  "[markdown]":{
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true,
+    }
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  // YAML
   "yaml.schemas": {
     "kubernetes": [
       "*.yml",
       "*.yaml"
     ],
-  }
+  },
+  // ToDo
+  "todo-tree.general.tags": ["TODO", "CHECK", "FIXME", "NOTE"],
+  "todo-tree.highlights.defaultHighlight": {
+    "gutterIcon": true
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "icon": "check-circle-fill",
+      "foreground": "#FBB161",
+      "iconColour": "#FBB161",
+    },
+    "CHECK": {
+      "icon": "plus-circle",
+      "foreground": "#40Ba8D",
+      "iconColour": "#40Ba8D",
+    },
+    "NOTE": {
+      "icon": "paintbrush",
+      "foreground": "#00bfff",
+      "iconColour": "#00bfff",
+    },
+    "FIXME": {
+      "icon": "flame",
+      "foreground": "#F0DC70",
+      "iconColour": "#F0DC70",
+    },
+  },
+  // Git
+  "gitlens.ai.experimental.model": "openai:gpt-4o",
 }
