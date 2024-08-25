@@ -1,10 +1,46 @@
 {
+  // UI
   "workbench.colorTheme": "GitHub Dark",
   "workbench.iconTheme": "material-icon-theme",
-  "yaml.schemas": 
+  "workbench.statusBar.visible": true,
+  "workbench.editor.enablePreview": false,
+  "explorer.openEditors.visible": 1,
+  "explorer.compactFolders": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.cursorBlinking": true,
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.fontLigatures": true,
+  "editor.cursorBlinking": "phase",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "breadcrumbs.enabled": false,
+  // Editing
+  "redhat.telemetry.enabled": false,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.stickyScroll.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.guides.bracketPairsHorizontal": true,
+  // Vim
+  "vim.useSystemClipboard": false,
+  "vim.hlsearch": true,
+  "vim.visualstar": true,
+  "vim.easymotion": true,
+  "vim.easymotionKeys": "asdfghjkwertuiop",
+  "vim.foldfix": true,
+  "vim.leader": "<space>",
+  "vim.statusBarColorControl": true,
+  "vim.statusBarColors.normal": ["#161821", "#818596"],
+  "vim.statusBarColors.insert": ["#84A0C6", "#161821"],
+  "vim.statusBarColors.visual": ["#84A0C6", "#161821"],
+  //
+  "yaml.schemas": {
     "kubernetes": [
       "*.yml",
       "*.yaml"
-    ]
+    ],
   }
 }
