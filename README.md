@@ -19,14 +19,14 @@
   - private: 192.168.56.200/24
   - memory: 4096
   - cpus: 2
-    
+
 - WorkerNode1:
   - box: bento/ubuntu-24.04
   - Hostname: wk01
   - private: 192.168.56.201/24
   - memory: 8192
   - cpus: 2
- 
+
 - WorkerNode2:
   - box: bento/ubuntu-24.04
   - Hostname: wk02
@@ -52,7 +52,7 @@ Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
 
 # Enableの場合Disableに変更する
 Disable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform 
+Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
 ```
 
 ```
@@ -311,24 +311,49 @@ code-serverへログインする｡
 
 http://<EXTERNAL-IP>:8080
 
-SSHの鍵を作成する｡
+kubectlインストール
 
 ```bash
-ssh-keygen -t ed25519 -N "" -f ~/.ssh/github
-cat << EOF > .ssh/config
-Host github.com
-    IdentityFile ~/.ssh/github
-    User git
-EOF
-cat .ssh/github.pub
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install -y software-properties-common curl apt-transport-https
+
+export KUBERNETES_VERSION=v1.31
+export CRIO_VERSION=v1.30
+curl -fsSL https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/Release.key |
+sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/$KUBERNETES_VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/stable:/$CRIO_VERSION/deb/Release.key |
+sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+sudo echo "deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/stable:/$CRIO_VERSION/deb/ /" | sudo tee /etc/apt/sources.list.d/cri-o.list
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install -y kubectl helm
 ```
 
-GitHubに鍵を登録する｡
-
-`Settings > SSH and GPG keys`
-
-Git clone
+ホストから資源のコピー
 
 ```bash
-git clone git@github.com:yutoc1/house_kube.git
+# ホスト側で操作する
+cd ${HOME}
+CODE_SERVER=$(kubectl get pod -l app.kubernetes.io/name=code-server -n default -o jsonpath="{.items[*].metadata.name}")
+HOMEDIR="/home/coder"
+kubectl cp .gitconfig ${CODE_SERVER}:${HOMEDIR}/.gitconfig
+kubectl cp .ssh/github ${CODE_SERVER}:${HOMEDIR}/.ssh/github
+kubectl cp .ssh/github.pub ${CODE_SERVER}:${HOMEDIR}/.ssh/github.pub
+kubectl cp .kube/config ${CODE_SERVER}:${HOMEDIR}/.kube/config
+```
+
+bashrc作成
+
+```bash
+cd ${HOME}
+touch .bashrc
+cat << EOF > .bashrc
+alias kc='kubectl'
+EOF
+source .bashrc
 ```
