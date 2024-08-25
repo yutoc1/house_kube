@@ -294,10 +294,11 @@ admin:adminでログイン可能｡初期ログイン時にパスワード変更
 ## Code-Serverインストール
 
 ```bash
+CODE_PASS=<Password>
 git clone https://github.com/coder/code-server
 cd code-server
 sed -i 's,ClusterIP,LoadBalancer,g' ci/helm-chart/values.yaml
-sed -i '$apasswod: "Min@4581"' ci/helm-chart/values.yaml
+sed -i '$apasswod: '${CODE_PASS} ci/helm-chart/values.yaml
 helm upgrade --install code-server ci/helm-chart
 ```
 
