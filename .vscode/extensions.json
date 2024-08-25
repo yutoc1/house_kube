@@ -24,6 +24,7 @@
     "bpruitt-goddard.mermaid-markdown-syntax-highlighting",
     "humao.rest-client",
     "shuworks.vscode-table-formatter",
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "Gruntfuggly.todo-tree"
   ]
 }
