@@ -1,5 +1,10 @@
 # house_kube
 
+## ToDO
+
+- TODO Markdown Preview調査
+- CHECK HTTPS設定
+
 ## 前提
 
 - MasterNode1台
