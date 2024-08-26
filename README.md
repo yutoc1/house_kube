@@ -318,7 +318,7 @@ cd certs
 ## 秘密鍵の作成
 openssl ecparam -out ca.key -name prime256v1 -genkey
 ## CSRの作成
-openssl req -new -sha256 -key ca.key -out ca.csr -subj "C=JP/ST=Chiba/O=myorg/CN=code.loc"
+openssl req -new -sha256 -key ca.key -out ca.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=code.loc"
 ## ルート証明書の作成
 openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 
@@ -326,7 +326,7 @@ openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 ## 秘密鍵の作成
 openssl ecparam -out codeserver.key -name prime256v1 -genkey
 ## CSRの作成
-openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
+openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
 ## 証明書の作成
 openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt  
 ## 証明書の表示
