@@ -331,6 +331,10 @@ openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "/C=JP/ST
 openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt  
 ## 証明書の表示
 openssl x509 -in codeserver.crt -text -noout
+
+# DERファイル変換
+openssl x509 -outform der -in ca.crt -out ca.der
+openssl x509 -outform der -in codeserver.crt -out codeserver.der
 ```
 
 ホストへCA証明書とサーバ証明書を送信する
