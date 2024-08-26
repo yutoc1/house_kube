@@ -2,9 +2,8 @@
 
 ## ToDO
 
-- TODO Ingress設定
-- TODO code-server https設定
-- TODO Markdown Preview調査
+- TODO Prometheusインストール
+- TODO ArgoCDインストール
 
 ## 前提
 
@@ -13,6 +12,7 @@
 - VirtualBox上でUbuntuを動かす
 - ランタイムはCRI-Oを使う
 - CNIはFlannelを利用する
+- 設定後はcode-server上で作業する｡
 
 ## 仮想サーバ概要
 
@@ -51,16 +51,7 @@
 
 ## Vagrantによる仮想サーバ構築
 
-WSL2のインストールでVirtualMachinePlatformがEnableの場合にBoxのSSH鍵作成で停止する｡
-回避方法は以下の通り､VirtualMachinePlatformをDisableに変更するか､virtualBoxで対象のVMをクリックする｡
-
-```
-Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-
-# Enableの場合Disableに変更する
-Disable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
-```
+SSH鍵の作成で止まった場合は､VirtualBox上で対象のサーバを選択すると処理が進む｡
 
 ```
 mkdir Vagrant
@@ -445,6 +436,7 @@ HOMEDIR="/home/coder"
 kubectl cp .gitconfig ${CODE_SERVER}:${HOMEDIR}/.gitconfig
 kubectl cp .ssh/github ${CODE_SERVER}:${HOMEDIR}/.ssh/github
 kubectl cp .ssh/github.pub ${CODE_SERVER}:${HOMEDIR}/.ssh/github.pub
+kubectl cp .ssh/config ${CODE_SERVER}:${HOMEDIR}/.ssh/config
 kubectl cp .kube/config ${CODE_SERVER}:${HOMEDIR}/.kube/config
 ```
 
