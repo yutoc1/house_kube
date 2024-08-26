@@ -325,8 +325,12 @@ openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 # code-server用の証明書の作成
 ## 秘密鍵の作成
 openssl ecparam -out codeserver.key -name prime256v1 -genkey
+## SANの作成
+cat <<EOF > subjectnames.txt
+subjectAltName=pub.code.loc
+EOF
 ## CSRの作成
-openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
+openssl req -new -sha256 -key codeserver.key -out codeserver.csr -extfile subjectnames.txt -subj "/C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
 ## 証明書の作成
 openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt  
 ## 証明書の表示
