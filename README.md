@@ -2,8 +2,9 @@
 
 ## ToDO
 
+- TODO Ingress設定
+- TODO code-server https設定
 - TODO Markdown Preview調査
-- CHECK HTTPS設定
 
 ## 前提
 
@@ -11,6 +12,7 @@
 - WorkerNode2台
 - VirtualBox上でUbuntuを動かす
 - ランタイムはCRI-Oを使う
+- CNIはFlannelを利用する
 
 ## 仮想サーバ概要
 
@@ -256,7 +258,7 @@ cd ~/house_kube/manifest
 kubectl apply -f storage -R
 ```
 
-## Ingress設定
+## LB設定
 
 MetalLBインストール
 
@@ -272,6 +274,15 @@ MetalLB設定
 cd ~/house_kube/manifest
 kubectl apply -f metallb/ipaddress_pool.yaml
 kubectl apply -f metallb/l2_advertisement.yaml
+```
+
+## Ingress設定
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+kubectl get pod -n default
 ```
 
 ## Grafanaインストール
@@ -298,6 +309,50 @@ admin:adminでログイン可能｡初期ログイン時にパスワード変更
 
 ## Code-Serverインストール
 
+証明書作成
+
+```bash
+mkdir certs
+cd certs
+# オレオレルート証明書の作成
+## 秘密鍵の作成
+openssl ecparam -out ca.key -name prime256v1 -genkey
+## CSRの作成
+openssl req -new -sha256 -key ca.key -out ca.csr
+## 入力項目
+### Country Name: JP
+### State: Tokyo
+### Common Name: codeserver-ca
+## ルート証明書の作成
+openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
+
+# code-server用の証明書の作成
+## 秘密鍵の作成
+openssl ecparam -out codeserver.key -name prime256v1 -genkey
+## CSRの作成
+openssl req -new -sha256 -key codeserver.key -out codeserver.csr
+## 入力項目
+### Country Name: JP
+### State: Tokyo
+### Common Name: codeserver
+## AltNameの設定
+cat << EOF > subjectnames.txt
+subjectAltName = IP:xx.xx.xx.xx
+EOF
+## 証明書の作成
+openssl x509 -req -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt -days 36500 -sha256 -extfile subjectnames.txt
+## 証明書の表示
+openssl x509 -in codeserver.crt -text -noout
+```
+
+Secretに証明書を登録する
+
+```bash
+CERT_PATH=${HOME}/certs/codeserver.crt
+KEY_PATH=${HOME}/certs/codeserver.key
+kubectl create secret tls code-server --cert=${CERT_PATH} --key=${KEY_PATH} -n default
+```
+
 ```bash
 CODE_PASS=<Password>
 git clone https://github.com/coder/code-server
@@ -316,6 +371,8 @@ echo $(kubectl get secret --namespace default code-server -o jsonpath="{.data.pa
 code-serverへログインする｡
 
 http://<EXTERNAL-IP>:8080
+
+Terminalを開く
 
 kubectlインストール
 
