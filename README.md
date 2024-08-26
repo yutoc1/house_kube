@@ -333,6 +333,22 @@ openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.ke
 openssl x509 -in codeserver.crt -text -noout
 ```
 
+ホストへCA証明書とサーバ証明書を送信する
+
+```powershell
+cd Vagrant
+vagrant ssh-config | Out-File -Encoding utf8 ssh.config
+scp -F ssh.config vagrant@cp01:/home/vagrant/certs/ca.der ./
+scp -F ssh.config vagrant@cp01:/home/vagrant/certs/codeserver.der ./
+```
+
+Windowsに証明書をインストールする
+
+```
+codeserver.der → 「信頼された発行元」
+ca.der → 「信頼されたルート証明機関」
+```
+
 Secretに証明書を登録する
 
 ```bash
