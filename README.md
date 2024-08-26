@@ -314,25 +314,25 @@ admin:adminでログイン可能｡初期ログイン時にパスワード変更
 ```bash
 mkdir certs
 cd certs
-# オレオレルート証明書の作成
+# 自己署名証明書の作成
 ## 秘密鍵の作成
 openssl ecparam -out ca.key -name prime256v1 -genkey
 ## CSRの作成
-openssl req -new -sha256 -key ca.key -out ca.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=code.loc"
+openssl req -new -sha256 -key ca.key -out ca.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=code-ca"
 ## ルート証明書の作成
 openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 
 # code-server用の証明書の作成
 ## 秘密鍵の作成
 openssl ecparam -out codeserver.key -name prime256v1 -genkey
+## CSRの作成
+openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=code-server"
 ## SANの作成
 cat <<EOF > subjectnames.txt
-subjectAltName=pub.code.loc
+subjectAltName=DNS:pub.code.loc
 EOF
-## CSRの作成
-openssl req -new -sha256 -key codeserver.key -out codeserver.csr -extfile subjectnames.txt -subj "/C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
 ## 証明書の作成
-openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt  
+openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt -extfile subjectnames.txt
 ## 証明書の表示
 openssl x509 -in codeserver.crt -text -noout
 
