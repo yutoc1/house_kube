@@ -350,8 +350,10 @@ Secretに証明書を登録する
 ```bash
 CERT_PATH=${HOME}/certs/codeserver.crt
 KEY_PATH=${HOME}/certs/codeserver.key
-kubectl create secret tls code-server --cert=${CERT_PATH} --key=${KEY_PATH} -n default
+kubectl create secret tls code-server-tls --cert=${CERT_PATH} --key=${KEY_PATH} -n default
 ```
+
+helm valuesの修正
 
 ```bash
 CODE_PASS=<Password>
@@ -359,6 +361,31 @@ git clone https://github.com/coder/code-server
 cd code-server
 sed -i 's,ClusterIP,LoadBalancer,g' ci/helm-chart/values.yaml
 sed -i '$apasswod: '${CODE_PASS} ci/helm-chart/values.yaml
+```
+
+helm valuesの修正｡Ingress用｡
+
+```bash
+vim ci/helm-chart/values.yaml
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: code.example.loc
+      paths:
+        - /
+  ingressClassName: ""
+  tls:
+    - secretName: code-server-tls
+      hosts:
+        - code.example.loc
+```
+
+helm chartの適用
+
+```bash
 helm upgrade --install code-server ci/helm-chart
 ```
 
