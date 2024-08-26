@@ -318,11 +318,7 @@ cd certs
 ## 秘密鍵の作成
 openssl ecparam -out ca.key -name prime256v1 -genkey
 ## CSRの作成
-openssl req -new -sha256 -key ca.key -out ca.csr
-## 入力項目
-### Country Name: JP
-### State: Tokyo
-### Common Name: codeserver-ca
+openssl req -new -sha256 -key ca.key -out ca.csr -subj "C=JP/ST=Chiba/O=myorg/CN=code.loc"
 ## ルート証明書の作成
 openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 
@@ -330,17 +326,9 @@ openssl x509 -req -sha256 -days 36500 -in ca.csr -signkey ca.key -out ca.crt
 ## 秘密鍵の作成
 openssl ecparam -out codeserver.key -name prime256v1 -genkey
 ## CSRの作成
-openssl req -new -sha256 -key codeserver.key -out codeserver.csr
-## 入力項目
-### Country Name: JP
-### State: Tokyo
-### Common Name: codeserver
-## AltNameの設定
-cat << EOF > subjectnames.txt
-subjectAltName = IP:xx.xx.xx.xx
-EOF
+openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "C=JP/ST=Chiba/O=myorg/CN=pub.code.loc"
 ## 証明書の作成
-openssl x509 -req -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt -days 36500 -sha256 -extfile subjectnames.txt
+openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt  
 ## 証明書の表示
 openssl x509 -in codeserver.crt -text -noout
 ```
@@ -359,7 +347,6 @@ helm valuesの修正
 CODE_PASS=<Password>
 git clone https://github.com/coder/code-server
 cd code-server
-sed -i 's,ClusterIP,LoadBalancer,g' ci/helm-chart/values.yaml
 sed -i '$apasswod: '${CODE_PASS} ci/helm-chart/values.yaml
 ```
 
@@ -373,14 +360,14 @@ ingress:
   annotations:
     kubernetes.io/tls-acme: "true"
   hosts:
-    - host: code.example.loc
+    - host: pub.code.loc
       paths:
         - /
-  ingressClassName: ""
+  ingressClassName: "nginx"
   tls:
     - secretName: code-server-tls
       hosts:
-        - code.example.loc
+        - pub.code.loc
 ```
 
 helm chartの適用
