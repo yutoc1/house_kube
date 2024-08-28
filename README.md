@@ -344,22 +344,19 @@ openssl x509 -in codeserver.crt -text -noout
 
 # DERファイル変換
 openssl x509 -outform der -in ca.crt -out ca.der
-openssl x509 -outform der -in codeserver.crt -out codeserver.der
 ```
 
-ホストへCA証明書とサーバ証明書を送信する
+ホストへCA証明書を送信する
 
 ```powershell
 cd Vagrant
 vagrant ssh-config | Out-File -Encoding utf8 ssh.config
 scp -F ssh.config vagrant@cp01:/home/vagrant/certs/ca.der ./
-scp -F ssh.config vagrant@cp01:/home/vagrant/certs/codeserver.der ./
 ```
 
 Windowsに証明書をインストールする
 
 ```
-codeserver.der → 「信頼された発行元」
 ca.der → 「信頼されたルート証明機関」
 ```
 
@@ -378,6 +375,13 @@ CODE_PASS=<Password>
 git clone https://github.com/coder/code-server
 cd code-server
 sed -i '$apasswod: '${CODE_PASS} ci/helm-chart/values.yaml
+```
+
+helm valuesの修正｡Storage用｡
+
+```bash
+volumePermissions:
+  enabled: false # trueからfalseへ変更する
 ```
 
 helm valuesの修正｡Ingress用｡
