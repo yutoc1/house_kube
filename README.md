@@ -1,6 +1,6 @@
 # house_kube
 
-## ToDO
+## ToDo
 
 - TODO Prometheusインストール
 - TODO ArgoCDインストール
