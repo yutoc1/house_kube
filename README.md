@@ -12,7 +12,8 @@
 - VirtualBox上でUbuntuを動かす
 - ランタイムはCRI-Oを使う
 - CNIはFlannelを利用する
-- 設定後はcode-server上で作業する｡
+- NFSを設定し動的プロビジョニングを利用する
+- 設定後はcode-server上で作業する
 
 ## 仮想サーバ概要
 
@@ -163,6 +164,19 @@ git clone git@github.com:yutoc1/house_kube.git
 sudo kubeadm token create --print-join-command
 ```
 
+### NFSサーバのインストール
+
+```bash
+sudo apt install -y nfs-kernel-server
+NFS_DIR=/export/nfs
+sudo mkdir -p ${NFS_DIR}
+sudo chown nobody:nogroup ${NFS_DIR}
+sudo chmod 777 ${NFS_DIR}
+sudo sed -i '$a/export 192.168.56.0/24(rw,fsid=0,insecure,no_subtree_check_async)' /etc/exports
+sudo systemctl restart nfs-server
+sudo exportfs -v
+```
+
 ## WorkerNodeの初期設定
 
 ### boxにログインする｡
@@ -188,16 +202,15 @@ kubeadm version
 ### kubeadmの初期セットアップ
 
 ```bash
-sudo kubeadm join 10.x.x.x:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
+sudo kubeadm join 192.168.56.200:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
 ```
 
-### PV用のディレクトリ作成
+### NFSクライアントのインストール
 
 ```bash
-sudo mkdir -p /mnt/disks/pv{01..03}
-sudo chmod 777 /mnt/disks/pv{01..03}
-sudo mkdir -p /mnt/disks/code
-sudo chmod 777 /mnt/disks/code
+sudo apt install -y nfs-common
+sudo mkdir -p /mnt/nfs
+sudo mount -v 192.168.56.200:/export/nfs /mnt/nfs
 ```
 
 ## クラスタの初期化
@@ -245,8 +258,10 @@ sudo apt install helm -y
 ## Storage設定
 
 ```bash
-cd ~/house_kube/manifest
-kubectl apply -f storage -R
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+--set nfs.server=192.168.56.200 \
+--set nfs.path=/export/nfs
 ```
 
 ## LB設定
@@ -320,7 +335,7 @@ openssl ecparam -out codeserver.key -name prime256v1 -genkey
 openssl req -new -sha256 -key codeserver.key -out codeserver.csr -subj "/C=JP/ST=Chiba/O=myorg/CN=code-server"
 ## SANの作成
 cat <<EOF > subjectnames.txt
-subjectAltName=DNS:pub.code.loc
+subjectAltName=DNS:code.kube.loc
 EOF
 ## 証明書の作成
 openssl x509 -req -sha256 -days 36500 -in codeserver.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out codeserver.crt -extfile subjectnames.txt
@@ -375,14 +390,14 @@ ingress:
   annotations:
     kubernetes.io/tls-acme: "true"
   hosts:
-    - host: pub.code.loc
+    - host: code.kube.loc
       paths:
         - /
   ingressClassName: "nginx"
   tls:
     - secretName: code-server-tls
       hosts:
-        - pub.code.loc
+        - code.kube.loc
 ```
 
 helm chartの適用
@@ -399,7 +414,7 @@ echo $(kubectl get secret --namespace default code-server -o jsonpath="{.data.pa
 
 code-serverへログインする｡
 
-http://<EXTERNAL-IP>:8080
+http://code.kube.loc:8080
 
 Terminalを開く
 
