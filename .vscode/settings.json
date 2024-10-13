@@ -12,12 +12,15 @@
   "explorer.confirmDelete": false,
   "terminal.integrated.fontSize": 14,
   "terminal.integrated.cursorBlinking": true,
-  "editor.minimap.enabled": false,
-  "editor.bracketPairColorization.enabled": true,
-  "editor.fontLigatures": true,
   "editor.cursorBlinking": "phase",
+  "editor.minimap.enabled": false,
+  "editor.fontLigatures": true,
+  "editor.bracketPairColorization.enabled": true,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "breadcrumbs.enabled": false,
+  "debug.console.fontSize":12,
+  "window.commandCenter": false,
+  "window.title": " ",
   // Editing
   "redhat.telemetry.enabled": false,
   "files.insertFinalNewline": true,
@@ -26,8 +29,9 @@
   "editor.stickyScroll.enabled": true,
   "editor.guides.bracketPairs": true,
   "editor.guides.bracketPairsHorizontal": true,
+  "workbench.startupEditor": "newUntitledFile",
   // Vim
-  "vim.useSystemClipboard": false,
+  "vim.useSystemClipboard": true,
   "vim.hlsearch": true,
   "vim.visualstar": true,
   "vim.easymotion": true,
@@ -60,6 +64,7 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
   },
+  "autoDocstring.docstringFormat": "google",
   "[markdown]":{
     "editor.defaultFormatter": "yzhang.markdown-all-in-one",
     "editor.quickSuggestions": {
@@ -103,13 +108,13 @@
     },
     "CHECK": {
       "icon": "plus-circle",
-      "foreground": "#40Ba8D",
-      "iconColour": "#40Ba8D",
+      "foreground": "#40BA8D",
+      "iconColour": "#40BA8D",
     },
     "NOTE": {
       "icon": "paintbrush",
-      "foreground": "#00bfff",
-      "iconColour": "#00bfff",
+      "foreground": "#00BFFF",
+      "iconColour": "#00BFFF",
     },
     "FIXME": {
       "icon": "flame",
@@ -117,6 +122,4 @@
       "iconColour": "#F0DC70",
     },
   },
-  // Git
-  "gitlens.ai.experimental.model": "openai:gpt-4o",
 }
