@@ -92,14 +92,11 @@ sudo vim /etc/iptables/rules.v4
 
 # ポート22の下に、以下を追加
 ---
--A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 6443 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 2379 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 2380 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 10250 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10251 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10252 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 10257 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 10259 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --match multiport --dports 30000:32767 -j ACCEPT
@@ -123,16 +120,8 @@ sudo vim /etc/iptables/rules.v4
 
 # ポート22の下に、以下を追加
 ---
--A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 6443 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 2379 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 2380 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --dport 10250 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10251 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10252 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10257 -j ACCEPT
--A INPUT -p tcp -m state --state NEW -m tcp --dport 10259 -j ACCEPT
 -A INPUT -p tcp -m state --state NEW -m tcp --match multiport --dports 30000:32767 -j ACCEPT
 
 # 以下は削除する
