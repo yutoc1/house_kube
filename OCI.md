@@ -161,7 +161,7 @@ sudo systemctl restart containerd
 
 ```bash
 # Kubernetesのバージョンを環境変数に指定
-export KUBERNETES_VERSION=v1.32
+export KUBERNETES_VERSION=v1.36
 
 # Kubernetesの公式GPGキーを追加
 sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/${KUBERNETES_VERSION}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
