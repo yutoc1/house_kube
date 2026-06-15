@@ -527,3 +527,70 @@ alias kc='kubectl'
 EOF
 source .bashrc
 ```
+
+## 参考: Kubeadm Vup
+
+全クラスタで実行
+
+### パッケージリポジトリの切り替え
+
+```bash
+sudo sed -i 's/v1.3x/v1.3y/' /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+```
+
+### kubeadm Vup
+
+```bash
+sudo apt-mark unhold kubeadm && \
+sudo apt-get update && sudo apt-get install -y kubeadm='1.3x.x-*' && \
+sudo apt-mark hold kubeadm
+```
+
+### kubectl, kubelet Vup
+
+```bash
+sudo apt-mark unhold kubelet kubectl && \
+sudo apt-get update && sudo apt-get install -y kubelet='1.31.x-*' kubectl='1.31.x-*' && \
+sudo apt-mark hold kubelet kubectl
+```
+
+### Control Plane Vup
+
+```bash
+## Upgrade Planの確認
+sudo kubeadm upgrade plan
+
+## Vup
+sudo kubeadm upgrade apply v1.3x.xx
+
+## Vupの確認
+kubectl get nodes
+```
+
+## Worker Node Vup
+
+Control PlaneでNode Drain
+
+```bash
+## Node Drainwを実施
+kubectl drain k8s-worker0x --ignore-daemonsets --delete-emptydir-data
+
+## ステータスがScheduleDisableになっていること
+kubectl get nodes
+```
+
+NodeのVup
+
+```bash
+sudo kubeadm upgrade node
+```
+
+Control PlaneでNode Uncordon
+
+```bash
+kubectl uncordon k8s-worker0x
+
+## Vupされたこと、ステータスがShceduleになっていること
+kubectl get nodes
+```
