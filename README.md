@@ -568,7 +568,7 @@ sudo kubeadm upgrade apply v1.3x.xx
 kubectl get nodes
 ```
 
-## Worker Node Vup
+### Worker Node Vup
 
 Control PlaneでNode Drain
 
