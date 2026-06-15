@@ -146,7 +146,7 @@ sudo iptables-restore < /etc/iptables/rules.v4
 ## Containerdのインストール
 
 ```bash
-apt-get update && apt-get install -y apt-transport-https ca-certificates software-properties-common curl gpg
+apt update && apt install -y apt-transport-https ca-certificates software-properties-common curl gpg
 
 ## Docker公式のGPG鍵を追加
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -159,7 +159,7 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 ## containerdのインストール
-apt-get update && apt-get install -y containerd.io
+apt update && apt install -y containerd.io
 
 # containerdの設定
 sudo mkdir -p /etc/containerd
