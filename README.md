@@ -208,6 +208,16 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl get all -A
 ```
 
+bashrc追記
+
+```bash
+cd ${HOME}
+cat << EOF > .bashrc
+alias kc='kubectl'
+EOF
+source .bashrc
+```
+
 ### Helmインストール
 
 ```bash
@@ -241,6 +251,18 @@ cilium install --version ${CILIUM_VERSION} \
 cilium status --wait
 ```
 
+**Hubbleのインストール**
+
+WIP
+
+### StorageClassのセットアップ
+
+Local Path Provisionerのインストール
+
+```
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.36/deploy/local-path-storage.yaml
+```
+
 ### GitHubとの連携
 
 SSHの鍵を作成する｡
@@ -271,43 +293,15 @@ git clone git@github.com:yutoc1/house_kube.git
 sudo kubeadm token create --print-join-command
 ```
 
-### NFSサーバのインストール
-
-```bash
-sudo apt install -y nfs-kernel-server
-NFS_DIR=/export/nfs
-sudo mkdir -p ${NFS_DIR}
-sudo chown nobody:nogroup ${NFS_DIR}
-sudo chmod 777 ${NFS_DIR}
-sudo sed -i '$a/export 10.0.0.0/24(rw,fsid=0,insecure,no_subtree_check_async)' /etc/exports
-sudo systemctl restart nfs-server
-sudo exportfs -v
-```
-
 ## WorkerNodeのセットアップ
 
 ### kubeadmでJoinする
 
 ```bash
-sudo kubeadm join 192.168.56.200:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
-```
-
-### NFSクライアントのインストール
-
-```bash
-sudo apt install -y nfs-common
-sudo mkdir -p /mnt/nfs
-sudo mount -v 10.0.0.100:/export/nfs /mnt/nfs
+sudo kubeadm join 10.0.0.100:6443 --token xxxx --desicovery-token-ca-cert-hash sha256:xxxx
 ```
 
 ## 稼働確認
-
-### Node/Podの状態確認
-
-```bash
-kubectl get nodes
-kubectl get pods -n kube-system
-```
 
 ### Nginxのデプロイ確認
 
@@ -319,15 +313,6 @@ kubectl expose pod nginx --type=NodePort
 IP=`kubectl get node wk01 -o=jsonpath='{.status.addresses[?(@.type == "InternalIP")].address}'`
 PORT=`kubectl get svc nginx -o yaml -o=jsonpath='{.spec.ports[0].nodePort}'`
 curl -I http://$IP:$PORT
-```
-
-## Storage設定
-
-```bash
-helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
---set nfs.server=192.168.56.200 \
---set nfs.path=/export/nfs
 ```
 
 ## LB設定
@@ -523,17 +508,6 @@ kubectl cp .ssh/github ${CODE_SERVER}:${HOMEDIR}/.ssh/github
 kubectl cp .ssh/github.pub ${CODE_SERVER}:${HOMEDIR}/.ssh/github.pub
 kubectl cp .ssh/config ${CODE_SERVER}:${HOMEDIR}/.ssh/config
 kubectl cp .kube/config ${CODE_SERVER}:${HOMEDIR}/.kube/config
-```
-
-bashrc作成
-
-```bash
-cd ${HOME}
-touch .bashrc
-cat << EOF > .bashrc
-alias kc='kubectl'
-EOF
-source .bashrc
 ```
 
 ## 参考: Kubeadm Vup
