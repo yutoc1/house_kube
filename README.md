@@ -233,7 +233,9 @@ Ciliumのインストール
 
 ```Bash
 CILIUM_VERSION=1.19.4
-cilium install --version ${CILIUM_VERSION}
+cilium install --version ${CILIUM_VERSION} \
+  --set ipam.operator.clusterPoolIPv4PodCIDRList='{10.244.0.0/16}' \
+  --set ipam.operator.clusterPoolIPv4MaskSize=24
 cilium status --wait
 ```
 
